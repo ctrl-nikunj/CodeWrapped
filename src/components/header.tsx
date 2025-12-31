@@ -15,7 +15,7 @@ export default function Header() {
                     CodeWrapped
                 </Link>
                 <Link href="https://www.github.com/ctrl-nikunj/CodeWrapped" target="_blank" >
-                    <Button className='hover:bg-background hover:text-foreground transition-colors'>
+                    <Button className='hover:bg-background hover:text-foreground transition-colors rounded-xl'>
                         GitHub
                     </Button>
                 </Link>

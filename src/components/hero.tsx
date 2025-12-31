@@ -34,7 +34,7 @@ export function Hero() {
                 transition={{ delay: 0.7, duration: 0.6, ease: 'easeOut' }}
             >
                 <Link href="/api/auth/login/github">
-                    <Button size="lg" className="px-8 py-6 text-base">
+                    <Button size="lg" className="px-8 py-6 text-base rounded-xl">
                         <GitHubLogoIcon scale={10} />
                         Continue with GitHub
                     </Button>
