@@ -69,7 +69,7 @@ export default function StreakSlide({ data, next, prev }: any) {
     )
 }
 
-function StreakCard({
+export function StreakCard({
     emoji,
     label,
     value,

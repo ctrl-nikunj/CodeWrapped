@@ -44,7 +44,7 @@ export function buildCommitAnalytics(commits: any[]) {
 
     for (const c of commits) {
         const date = c.commit.author.date.slice(0, 10)
-        const repo = c.repository.full_name.split('/')[1]
+        const repo = c.repository.full_name
 
         byDay[date] = (byDay[date] ?? 0) + 1
         byRepo[repo] = (byRepo[repo] ?? 0) + 1

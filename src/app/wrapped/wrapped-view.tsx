@@ -9,6 +9,8 @@ import StreakSlide from './slides/StreakSlide'
 import CommitSlide from './slides/CommitSlide'
 import HeatmapSlide from './slides/HeatMapSlide'
 import PeakMomentSlide from './slides/PeakMomentSlide'
+import TopRepoSlide from './slides/TopRepoSlide'
+import FinalSummarySlide from './slides/FinalSummarySlide'
 
 
 const slides = [
@@ -17,7 +19,9 @@ const slides = [
     StreakSlide,
     CommitSlide,
     HeatmapSlide,
-    PeakMomentSlide
+    PeakMomentSlide,
+    TopRepoSlide,
+    FinalSummarySlide
 ]
 
 export default function WrappedView({ data }: { data: any }) {
@@ -27,6 +31,7 @@ export default function WrappedView({ data }: { data: any }) {
 
     const next = () => setStep(s => Math.min(s + 1, slides.length - 1))
     const prev = () => setStep(s => Math.max(s - 1, 0))
+    const restart = () => setStep(0)
 
     useEffect(() => {
         function onKey(e: KeyboardEvent) {
@@ -61,6 +66,7 @@ export default function WrappedView({ data }: { data: any }) {
                         data={data}
                         next={next}
                         prev={prev}
+                        restart={restart}
                     />
                 </motion.div>
             </AnimatePresence>
