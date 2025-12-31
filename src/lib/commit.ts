@@ -5,25 +5,47 @@ export async function fetchAllCommits(
     token: string,
     username: string
 ) {
-    const res = await fetch(
-        `https://api.github.com/search/commits?q=author:${username}&per_page=100`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: 'application/vnd.github.cloak-preview+json',
-            },
-            next: { revalidate: 3600 },
-        }
-    )
+    // Calculate date range: 1 year ago from today
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setFullYear(endDate.getFullYear() - 1)
 
-    if (!res.ok) throw new Error('Commit fetch failed')
-    const data = await res.json()
-    return data.items || []
+    // Format dates as YYYY-MM-DD
+    const since = startDate.toISOString().split('T')[0]
+
+    let page = 1;
+    let allCommits: any[] = [];
+
+    while (true) {
+        const res = await fetch(
+            `https://api.github.com/search/commits?q=author:${username}+committer-date:>=${since}&per_page=100&page=${page}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/vnd.github.cloak-preview+json',
+                },
+                next: { revalidate: 3600 },
+            }
+        )
+
+        if (!res.ok) throw new Error('Commit fetch failed')
+        const data = await res.json()
+        const items = data.items || [];
+
+        allCommits = [...allCommits, ...items];
+
+        if (items.length < 100) break; // Reached last page
+        if (allCommits.length >= 1000) break; // Safety limit (optional, but good for search API limits)
+
+        page++;
+    }
+
+    return allCommits
 }
 
 export function buildCommitAnalytics(commits: any[]) {
 
-    const month: Record<string,string> = {
+    const month: Record<string, string> = {
         '01': 'January',
         '02': 'February',
         '03': 'March',
@@ -65,7 +87,7 @@ export function buildCommitAnalytics(commits: any[]) {
         byMonth,
         repo: repoTotal,
         streak: calculateStreaks(byDay),
-        peak:{
+        peak: {
             commits: peakCommits,
             date: peakDate,
             day: peakDay
