@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 
 export default async function WrappedPage() {
     const data = await getWrappedSummary()
-    console.log(data)
+
     return (
         <main className="min-h-screen flex flex-col">
             <BackgroundGradient />
