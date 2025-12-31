@@ -33,6 +33,6 @@ export async function GET(req: Request) {
     })
 
     return NextResponse.redirect(
-        new URL('/wrapped', process.env.BASE_URL)
+        new URL('/auth/loading', process.env.BASE_URL)
     )
 }

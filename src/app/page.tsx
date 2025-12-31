@@ -1,12 +1,22 @@
-export default function Home() {
+import Header from '@/components/header'
+import BackgroundGradient from '@/components/background'
+import { Hero } from '@/components/hero'
+
+export default function HomePage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black">
-      <a
-        href="/api/auth/login/github"
-        className="px-6 py-3 rounded-md bg-white text-black"
-      >
-        Generate My GitHub Wrapped
-      </a>
+    <main className="min-h-screen flex flex-col">
+      <BackgroundGradient />
+      <Header />
+
+      {/* Hero */}
+      <section className="flex-1 flex items-center justify-center px-6">
+        <Hero />
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center text-sm text-muted-foreground py-6">
+        Not affiliated with GitHub
+      </footer>
     </main>
   )
 }

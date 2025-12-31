@@ -1,52 +1,21 @@
 import { getWrappedSummary } from '@/lib/wrapped'
+import WrappedView from './wrapped-view'
+import Header from '@/components/header'
+import BackgroundGradient from '@/components/background'
+import { Card } from '@/components/ui/card'
 
 export default async function WrappedPage() {
     const data = await getWrappedSummary()
-
+    console.log(data)
     return (
-        <div className="p-10 space-y-6">
-            <h1 className="text-3xl font-bold">
-                {data.user.name}'s GitHub Wrapped
-            </h1>
-            <div>
-                <h2 className="text-xl font-semibold">
-                    Top Languages
-                </h2>
-
-                <ul className="mt-2 space-y-1">
-                    {data.languages.percentages
-                        .slice(0, 5)
-                        .map(lang => (
-                            <li key={lang.name}>
-                                {lang.name}: {lang.value}%
-                            </li>
-                        ))}
-                </ul>
-            </div>
-            <div>
-                <h2 className="text-xl font-semibold">
-                    Commit Activity
-                </h2>
-                <ul className="mt-2 space-y-1">
-                    {Object.entries(data.commits.byRepo)
-                        .slice(0, 5)
-                        .map(([repo, count]) => (
-                            <li key={repo}>
-                                {repo}: {count}
-                            </li>
-                        ))}
-                </ul>
-            </div>
-            <div>
-                <h2 className="text-xl font-semibold">
-                    Streak Activity
-                </h2>
-                <ul className="mt-2 space-y-1">
-                    <li>Longest Streak: {data.streakData.longestStreak}</li>
-                    <li>Current Streak: {data.streakData.currentStreak}</li>
-                    <li>Active Today: {data.streakData.activeToday ? 'Yes' : 'No'}</li>
-                </ul>
-            </div>
-        </div>
+        <main className="min-h-screen flex flex-col">
+            <BackgroundGradient />
+            <Header />
+            <section className="flex-1 flex items-center justify-center p-4 md:p-8">
+                <Card className="w-full max-w-5xl border-white/10 bg-white/5 backdrop-blur-2xl overflow-hidden flex flex-col items-center justify-center min-h-[600px]">
+                    <WrappedView data={data} />
+                </Card>
+            </section>
+        </main>
     )
 }

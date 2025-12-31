@@ -1,25 +1,23 @@
 import { cookies } from 'next/headers'
 import { githubFetch } from '@/app/api/_lib/github'
-import { getCommitActivity } from '@/lib/commit'
+import { buildCommitAnalytics, fetchAllCommits } from '@/lib/commit'
 import { getLanguageStats } from '@/lib/languages'
-import getStreakData from './streak'
+
+export const revalidate = 600
 
 export async function getWrappedSummary() {
     const cookieStore = await cookies()
     const token = cookieStore.get('gh_token')?.value
     if (!token) throw new Error('Unauthorized')
 
-    const user = await githubFetch('/user', token)
-    const repos = await githubFetch('/user/repos?per_page=100', token)
+    const [user, repos] = await Promise.all([
+        githubFetch('/user', token),
+        githubFetch('/user/repos?per_page=100', token),
+    ])
 
-    const commits = await getCommitActivity(
-        token,
-        user.login
-    )
-
-    const languages = await getLanguageStats(token, repos)
-
-    const streakData = await getStreakData(token, user.login)
+    const commitsData = await fetchAllCommits(token, user.login)
+    const commits = buildCommitAnalytics(commitsData)
+    const languages = await getLanguageStats(repos)
 
     return {
         user: {
@@ -29,6 +27,5 @@ export async function getWrappedSummary() {
         },
         commits,
         languages,
-        streakData,
     }
 }

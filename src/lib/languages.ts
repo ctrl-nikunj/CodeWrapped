@@ -4,47 +4,48 @@ type LanguageStats = {
         name: string
         value: number
     }[]
+    count: number
 }
 
 export async function getLanguageStats(
-    token: string,
     repos: any[]
 ): Promise<LanguageStats> {
-    const bytes: Record<string, number> = {}
-
-    for (const repo of repos) {
-        if (repo.fork) continue
-
-        const res = await fetch(
-            repo.languages_url,
-            {
+    const languageRequests = repos
+        .filter(r => !r.fork)
+        .map(repo =>
+            fetch(repo.languages_url, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     Accept: 'application/vnd.github+json',
                 },
-            }
+                next: { revalidate: 86400 }, // languages barely change
+            }).then(r => r.ok ? r.json() : null)
         )
+    const data = await Promise.all(languageRequests)
+    const bytes: Record<string, number> = data.reduce((acc, lang) => {
+        if (!lang) return acc
+        Object.entries(lang).forEach(([lang, bytes]) => {
+            acc[lang] = (acc[lang] || 0) + (bytes as number)
+        })
+        return acc
+    }, {} as Record<string, number>)
 
-        if (!res.ok) continue
+    const percentages: { name: string; value: number }[] = []
 
-        const data = await res.json()
+    const totalBytes = Object.values(bytes).reduce((acc, bytes) => acc + bytes, 0)
 
-        for (const [lang, count] of Object.entries(data)) {
-            bytes[lang] = (bytes[lang] || 0) + (count as number)
-        }
+    Object.entries(bytes).forEach(([lang, bytes]) => {
+        percentages.push({
+            name: lang,
+            value: Math.ceil((bytes / totalBytes) * 100),
+        })
+    })
+    percentages.sort((a, b) => b.value - a.value)
+
+    const count = percentages.length
+
+    return {
+        bytes,
+        percentages,
+        count,
     }
-
-    const total = Object.values(bytes).reduce(
-        (a, b) => a + b,
-        0
-    )
-
-    const percentages = Object.entries(bytes)
-        .map(([name, value]) => ({
-            name,
-            value: Math.round((value / total) * 100),
-        }))
-        .sort((a, b) => b.value - a.value)
-
-    return { bytes, percentages }
 }

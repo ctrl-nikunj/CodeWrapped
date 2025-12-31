@@ -1,5 +1,3 @@
-import { getCommitActivity } from "./commit"
-
 function toDateKey(date: string) {
     return new Date(date).toISOString().split('T')[0]
 }
@@ -52,9 +50,4 @@ export function calculateStreaks(dailyMap: Record<string, number>) {
         longestStreak: longest,
         activeToday: lastDay === todayKey,
     }
-}
-
-export default async function getStreakData(token: string, username: string) {
-    const activity = await getCommitActivity(token, username)
-    return calculateStreaks(activity.byDay)
 }

@@ -1,65 +1,74 @@
-type CommitActivity = {
-    totalCommits: number
-    byDay: Record<string, number>
-    byRepo: Record<string, number>
-}
+import { calculateStreaks } from "./streak"
 
-export async function getCommitActivity(
+// lib/github/commits.ts
+export async function fetchAllCommits(
     token: string,
     username: string
-): Promise<CommitActivity> {
-    const since = new Date()
-    since.setFullYear(since.getFullYear() - 1)
-
-    const reposRes = await fetch(
-        'https://api.github.com/user/repos?per_page=100',
+) {
+    const res = await fetch(
+        `https://api.github.com/search/commits?q=author:${username}&per_page=100`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
-                Accept: 'application/vnd.github+json',
+                Accept: 'application/vnd.github.cloak-preview+json',
             },
+            next: { revalidate: 3600 },
         }
     )
 
-    const repos = await reposRes.json()
+    if (!res.ok) throw new Error('Commit fetch failed')
+    const data = await res.json()
+    return data.items || []
+}
 
-    let totalCommits = 0
-    const byDay: Record<string, number> = {}
-    const byRepo: Record<string, number> = {}
+export function buildCommitAnalytics(commits: any[]) {
 
-    for (const repo of repos) {
-        if (repo.fork) continue
-
-        const commitsRes = await fetch(
-            `https://api.github.com/repos/${repo.owner.login}/${repo.name}/commits?author=${username}&since=${since.toISOString()}&per_page=100`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: 'application/vnd.github+json',
-                },
-            }
-        )
-
-        if (!commitsRes.ok) continue
-
-        const commits = await commitsRes.json()
-        if (!Array.isArray(commits)) continue
-
-        byRepo[repo.name] = commits.length
-        totalCommits += commits.length
-
-        for (const commit of commits) {
-            const date =
-                commit.commit.author?.date?.slice(0, 10)
-            if (!date) continue
-
-            byDay[date] = (byDay[date] || 0) + 1
-        }
+    const month: Record<string,string> = {
+        '01': 'January',
+        '02': 'February',
+        '03': 'March',
+        '04': 'April',
+        '05': 'May',
+        '06': 'June',
+        '07': 'July',
+        '08': 'August',
+        '09': 'September',
+        '10': 'October',
+        '11': 'November',
+        '12': 'December',
     }
 
+    const byDay: Record<string, number> = {}
+    const byRepo: Record<string, number> = {}
+    const byMonth: Record<string, number> = {}
+
+    for (const c of commits) {
+        const date = c.commit.author.date.slice(0, 10)
+        const repo = c.repository.full_name.split('/')[1]
+
+        byDay[date] = (byDay[date] ?? 0) + 1
+        byRepo[repo] = (byRepo[repo] ?? 0) + 1
+        byMonth[month[date.slice(5, 7)]] = (byMonth[month[date.slice(5, 7)]] ?? 0) + 1
+    }
+
+    const repoTotal = Object.entries(byRepo).length
+
+    const peakCommits = Math.max(...Object.values(byDay))
+    const peakDate = Object.entries(byDay).find(([_, count]) => count === peakCommits)?.[0]
+    const peakDay = new Date(peakDate!).toLocaleDateString(undefined, {
+        weekday: 'long'
+    })
     return {
-        totalCommits,
+        totalCommits: commits.length,
         byDay,
         byRepo,
+        byMonth,
+        repo: repoTotal,
+        streak: calculateStreaks(byDay),
+        peak:{
+            commits: peakCommits,
+            date: peakDate,
+            day: peakDay
+        },
     }
 }
