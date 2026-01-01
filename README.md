@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodeWrapped 🎁
 
-## Getting Started
+CodeWrapped is a data-driven, animated summary of your GitHub activity — inspired by the idea of “Wrapped” experiences — designed to visualize your year on GitHub in a clean, story-like format.
 
-First, run the development server:
+It transforms raw GitHub data into meaningful insights such as commit activity, repository highlights, contribution patterns, and personal milestones.
+
+---
+
+## ✨ Features (v1.0)
+
+- 🔐 GitHub OAuth authentication
+- 📊 Yearly GitHub activity analysis
+- 🔥 Contribution heatmap visualization
+- 🏆 Top repositories summary (podium-style UI)
+- 🧩 Animated slide-based storytelling experience
+- ⚡ Fast, responsive UI with smooth transitions
+- 🚀 Deployed and publicly accessible
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js (App Router)
+- **Animations**: Framer Motion
+- **Auth**: GitHub OAuth
+- **Data Source**: GitHub REST APIs
+- **Deployment**: Vercel
+
+---
+
+## 🧠 Architecture Overview
+
+- OAuth flow handled via GitHub and server-side token exchange
+- GitHub APIs queried securely using access tokens
+- Data normalized and transformed before rendering
+- Slide-based rendering ensures performance and narrative flow
+- Suspense and loading states handled explicitly to avoid layout shifts
+
+---
+
+## 📌 Current Limitations
+
+- Theme customization (dark/light, accents) is **not included in v1.0**
+
+This is an intentional scope decision to keep the first release focused on core functionality and storytelling.
+
+---
+
+## 🚧 Roadmap (v1.1)
+
+- 🎨 Theme system (light/dark + accent customization)
+- 📤 Shareable Wrapped links
+- 📈 Deeper analytics (commit streaks, language insights)
+- 🧩 UI polish and accessibility improvements
+
+---
+
+## 🧪 Local Development
 
 ```bash
+git clone https://github.com/your-username/CodeWrapped
+cd CodeWrapped
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+
+Create a .env.local file with your GitHub OAuth credentials:
+```bash
+GITHUB_CLIENT_ID=your-client-id
+GITHUB_CLIENT_SECRET=your-client-secret\
+BASE_URL=http://localhost:3000
+```
+
+Run the development server:
+```bash
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
