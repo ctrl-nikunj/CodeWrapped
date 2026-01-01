@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export default function BackgroundGradient() {
     return (
-        <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="fixed inset-0 -z-10 overflow-hidden">
             <motion.div
                 className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-linear-to-tr from-purple-500/30 to-pink-500/30 blur-3xl"
                 animate={{

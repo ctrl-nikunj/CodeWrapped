@@ -12,11 +12,14 @@ export default function HeatmapSlide({ data, next, prev }: any) {
             count,
         })
     )
+    const date = new Date()
+    const startDate = new Date().setFullYear(date.getFullYear() - 1)
+    const endDate = new Date().toLocaleString()
 
     const WEEKS = 53
     const CELL_SIZE = 14
     const GAP = 3
-    const heatmapWidth = WEEKS * (CELL_SIZE + GAP)
+    const heatmapWidth = WEEKS * (CELL_SIZE + 1 + GAP)
 
 
     const activeDays = values.length
@@ -43,8 +46,8 @@ export default function HeatmapSlide({ data, next, prev }: any) {
                 <HeatMap
                     value={values}
                     width={heatmapWidth}
-                    startDate={new Date('2025-01-01')}
-                    endDate={new Date('2025-12-31')}
+                    startDate={new Date(startDate)}
+                    endDate={new Date(endDate)}
                     rectSize={CELL_SIZE}
                     space={GAP}
                     panelColors={{
