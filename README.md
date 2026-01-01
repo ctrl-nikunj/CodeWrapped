@@ -58,7 +58,7 @@ This is an intentional scope decision to keep the first release focused on core 
 ## 🧪 Local Development
 
 ```bash
-git clone https://github.com/your-username/CodeWrapped
+git clone https://github.com/ctrl-nikunj/CodeWrapped
 cd CodeWrapped
 npm install
 npm run dev
